@@ -24,6 +24,17 @@ public class ProducerSendApi {
         // key value 序列化器 （必须）传序列化器的全限定类名路径
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        // （选填）通过合理修改以下生产者参数，来提高 kafka 吞吐量
+        // 1.缓冲区大小 默认 32M = 32 * 1024 * 1024L
+        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 32 * 1024 * 1024L);
+        // 2.批次大小 默认 16K = 16384
+        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 3.等待时间 默认 0 ms
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        // 4.数据压缩 默认 none
+        properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+
         // 创建 Kafka 生产者对象 在命令行发送的消息其实 key 都是空的
         // 使用 try with resources 方式，不用最后进行 kafkaProducer.close() 操作了
         try( KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties) ) {
