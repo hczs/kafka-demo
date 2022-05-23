@@ -27,7 +27,7 @@ public class ProducerSendApi {
         // 创建 Kafka 生产者对象 在命令行发送的消息其实 key 都是空的
         // 使用 try with resources 方式，不用最后进行 kafkaProducer.close() 操作了
         try( KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties) ) {
-            // 异步发送 向 first topic 中发送一个消息
+            // 异步发送 向 first topic 中发送一个消息 不指定分区 不指定 key 会使用默认的分区策略 粘性分区
             kafkaProducer.send(new ProducerRecord<>("first", "异步发送消息"));
 
             // 异步发送 带回调
@@ -42,6 +42,22 @@ public class ProducerSendApi {
 
             // 同步发送 在 send 后加一个 get 就是同步发送了
             kafkaProducer.send(new ProducerRecord<>("first", "同步发送消息")).get();
+
+            // 指定分区发送
+            kafkaProducer.send(new ProducerRecord<>("first", 1, "", "指定1号分区发送"),
+                    (metadata, exception) -> {
+                if (exception == null) {
+                    System.out.println("指定1号分区消息发送成功！" + "主题：" + metadata.topic() + " 分区：" + metadata.partition());
+                }
+            });
+
+            // 不指定分区，指定 key 分区策略就会把key的hash值取余 partition，来确定要发往哪个分区
+            kafkaProducer.send(new ProducerRecord<>("first", "hehe", "指定key发送消息"),
+                    (metadata, exception) -> {
+                if (exception == null) {
+                    System.out.println("指定key消息发送成功！" + "主题：" + metadata.topic() + " 分区：" + metadata.partition());
+                }
+            });
         }
 
     }
