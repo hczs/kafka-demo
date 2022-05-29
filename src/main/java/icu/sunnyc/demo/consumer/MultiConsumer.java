@@ -8,7 +8,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -16,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 一个消费者组有多个消费者测试
+ * 一个消费者组有多个消费者 消费同一个 topic 测试
  * 正常情况一个分区只能有一个消费者进行消费
  * @author ：hc
  * @date ：Created in 2022/5/29 15:47
